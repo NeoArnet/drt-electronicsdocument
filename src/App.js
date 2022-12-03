@@ -40,11 +40,11 @@ function App() {
         params
       )
       .then(async (re) => {
-        if (re.data.Message === true) {
+        if (re.data.successful === true) {
           setShow(false);
           alert("seccessful");
-          getnewlist();
         }
+        getnewlist();
       });
   };
 
