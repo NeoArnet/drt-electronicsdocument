@@ -7,6 +7,7 @@ import moment from "moment";
 import Badge from "react-bootstrap/Badge";
 import Form from "react-bootstrap/Form";
 import Modal from "react-bootstrap/Modal";
+import swal from 'sweetalert';
 
 function App() {
   const [newlist, setnewlist] = useState([]);
@@ -28,30 +29,34 @@ function App() {
 
   const checkStatus = async (id, e) => {
     settxtstatus(e.target.checked);
-    var params = {
-      EmployeeId: 3,
-      NewsId: id,
-      Status: e.target.checked,
-    };
 
+    const form = new FormData();
+    form.append('EmployeeId', 3)
+    form.append('NewsId', id)
+    form.append('Status', (e.target.checked===true? 1: 0))
+    
     await axios
       .post(
-        `https://cors-anywhere.herokuapp.com/http://dev-sw6-uapi.ecm.in.th/uapi/drt-ElectronicsDocument/ED-UpdateStatusNews`,
-        params
+        `/drt-ElectronicsDocument/ED-UpdateStatusNews`,
+        form,
+        { headers: { 'Content-Type': 'multipart/form-data' } }
       )
       .then(async (re) => {
         if (re.data.successful === true) {
           setShow(false);
-          alert("seccessful");
+          //alert("seccessful");
+          swal("บันทึกสถานะ", "บันทึกสถานะเรียบร้อยแล้ว", "success");
+            getnewlist();
         }
-        getnewlist();
+        
+         
       });
   };
 
   const getnewlist = async () => {
     await axios
       .get(
-        `https://cors-anywhere.herokuapp.com/http://dev-sw6-uapi.ecm.in.th/uapi/drt-ElectronicsDocument/ED-GetNews?EmployeeId=3`
+        `/drt-ElectronicsDocument/ED-GetNews?EmployeeId=3`
       )
       .then(async (re) => {
         setnewlist(re.data.data);
@@ -60,7 +65,7 @@ function App() {
 
   useEffect(() => {
     getnewlist();
-  }, []);
+  });
 
   return (
     <>
@@ -88,8 +93,7 @@ function App() {
                 <th>
                   <Form.Check
                     type="switch"
-                    id="custom-switch"
-                    checked={item.Status === 0 ? false : true}
+                    checked={item.Status}
                     onChange={(e) => checkStatus(item.NewsId, e)}
                   />
                 </th>
