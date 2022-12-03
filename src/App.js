@@ -44,12 +44,9 @@ function App() {
       .then(async (re) => {
         if (re.data.successful === true) {
           setShow(false);
-          //alert("seccessful");
           swal("บันทึกสถานะ", "บันทึกสถานะเรียบร้อยแล้ว", "success");
             getnewlist();
         }
-        
-         
       });
   };
 
